@@ -17,12 +17,12 @@
     [bgView setImage:[UIImage imageNamed:@"over.jpg"]];
     [self.view addSubview:bgView];
     
-    [self performSelector:@selector(delayMethod) withObject:nil afterDelay:3.0f];
+    [self performSelector:@selector(delayMethod) withObject:nil afterDelay:2.0f];
    }
 
 -(void)delayMethod{
     [[NSNotificationCenter defaultCenter]postNotificationName:@"OVER_ME" object:nil];
-    [self dismissViewControllerAnimated:NO completion:nil];
+    [self dismissViewControllerAnimated:YES completion:nil];
     
 }
 

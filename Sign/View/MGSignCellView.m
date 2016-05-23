@@ -45,9 +45,21 @@
         self.nameLabel = nameLabel;
         UIFont* nameFont = [UIFont fontWithName:@"Helvetica-Bold"  size:(40.0)];
         nameLabel.font = nameFont;
-        nameLabel.frame = CGRectMake(btnWidth*2+30,0,200,CELL_HEIGHT);
+        nameLabel.frame = CGRectMake(btnWidth*2+100,0,300,CELL_HEIGHT);
         
-       
+        UILabel* phoneLabel = [[UILabel alloc]init];
+        [self addSubview:phoneLabel];
+        self.phoneLabel = phoneLabel;
+        UIFont* phoneFont = [UIFont fontWithName:@"Helvetica"  size:(25.0)];
+        phoneLabel.font = phoneFont;
+        phoneLabel.frame = CGRectMake(CGRectGetMaxX(nameLabel.frame)+20,0,300,CELL_HEIGHT/2);
+        
+        
+        UILabel* companyLabel = [[UILabel alloc]init];
+        [self addSubview:companyLabel];
+        self.companyLabel = companyLabel;
+        companyLabel.font = phoneFont;
+        companyLabel.frame = CGRectMake(CGRectGetMaxX(nameLabel.frame)+20,CELL_HEIGHT/2,600,CELL_HEIGHT/2);
     }
     return self;
 }
@@ -55,8 +67,10 @@
 -(void)setEmployee:(Employee *)employee{
     _employee = employee;
     self.nameLabel.text = employee.name;
+    self.phoneLabel.text = employee.phone;
     self.signView.selected = employee.sign;
     self.tourismView.selected = employee.tourism;
+    self.companyLabel.text = employee.company;
     
 }
 

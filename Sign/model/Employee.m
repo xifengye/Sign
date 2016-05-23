@@ -80,5 +80,9 @@
     return sb;
 }
 
+-(NSString *)PID{
+   return _PID==nil?@"":_PID;
+}
+
 
 @end

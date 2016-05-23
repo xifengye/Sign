@@ -33,7 +33,7 @@
 -(void)overMe:(id)sender{
     [_udpSocket close];
     _udpSocket = nil;
-    [self dismissViewControllerAnimated:NO completion:nil];
+    [self dismissViewControllerAnimated:YES completion:nil];
     
 }
 
@@ -50,7 +50,28 @@
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"发送同步数据" style:UIBarButtonItemStyleDone target:self action:@selector(sendData)];
     self.navigationItem.title = self.title;
     
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"复制数据" style:UIBarButtonItemStyleDone target:self action:@selector(copyData)];
+    
 }
+
+-(void)copyData{
+    NSMutableString* sb = [NSMutableString string];
+    for(Employee* e in [DataBaseManager sharedManager].employees){
+        if(e.sign && e.tourism){
+            [sb appendFormat:@"姓名:%@\t电话:%@\t身份证号码:%@\n",e.name,e.phone,e.PID];
+        }
+    }
+    
+    UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+    pasteboard.string = sb;
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"复制成功"
+                                                    message:sb
+                                                   delegate:self
+                                          cancelButtonTitle:@"关闭" otherButtonTitles:nil];
+    [alert show];
+
+}
+
 -(void)sendData{
     NSArray* arr = [[DataBaseManager sharedManager] employeesBySigned];
     if(arr.count>0){

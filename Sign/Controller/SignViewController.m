@@ -35,7 +35,7 @@
 
 
 -(void)overMe:(id)sender{
-    [self dismissViewControllerAnimated:NO completion:nil];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 -(void)dealloc{
@@ -87,7 +87,7 @@
 
 -(void)onTextFieldValueChange:(NSNotification*)notification{
     UITextField *textField = notification.object;
-    keyWord = textField.text;
+    keyWord = [textField.text uppercaseString];
     if(keyWord!=nil && keyWord.length>0){
         [self showSearchResult];
     }else{

@@ -18,11 +18,11 @@
         CGFloat margin = 5;
         UITextField* tf = [[UITextField alloc]initWithFrame:CGRectMake(margin, margin, frame.size.width-margin*2, frame.size.height-margin*5)];
         tf.backgroundColor = [UIColor whiteColor];
-        tf.placeholder = @"输入首字母查找";
+        tf.placeholder = @"输入 首字母 或 电话号码 查找";
         tf.font = [UIFont fontWithName:@"Helvetica-Bold"  size:(30.0)];
         [tf setTextAlignment:NSTextAlignmentCenter];
         self.searchTextLabel = tf;
-        tf.keyboardType = UIKeyboardTypeNamePhonePad;
+        tf.keyboardType = UIKeyboardTypeASCIICapable;
         tf.borderStyle = UITextBorderStyleRoundedRect;
         [self addSubview:_searchTextLabel];
     }

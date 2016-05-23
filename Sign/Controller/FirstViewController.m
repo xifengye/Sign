@@ -34,7 +34,7 @@
 
 
 -(void)overMe:(id)sender{
-    [self dismissViewControllerAnimated:NO completion:nil];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 -(void)dealloc{
@@ -100,7 +100,7 @@
     tfID.textAlignment = NSTextAlignmentCenter;
     self.tfID = tfID;
     [viewP addSubview:tfID];
-    self.idPanel.hidden = _employee.PID==nil;
+    self.idPanel.hidden = !(_employee.PID!=nil&&_employee.PID.length>0);
     tfID.text = _employee.PID;
     tfID.delegate = self;
     tfID.font = font;
@@ -114,21 +114,27 @@
     [btnOk setTitle:@"确定" forState:UIControlStateNormal];
     [btnOk setBackgroundImage:normal2 forState:UIControlStateNormal];
     [btnOk setBackgroundImage:press2 forState:UIControlStateHighlighted];
+    [btnOk setBackgroundImage:[UIImage imageWithStretchable:@"action_sheet_button_replace_click"] forState:UIControlStateDisabled];
     [btnOk setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     btnOk.tag = 3;
     btnOk.font = [UIFont fontWithName:@"Helvetica-Bold"  size:(25.0)];
     [btnOk addTarget:self action:@selector(onBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
-    
+    self.btnOk = btnOk;
+    self.btnOk.enabled = _employee.PID.length==15||_employee.PID.length==18;
     
     UILabel* idLenLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, CGRectGetMinY(tfID.frame)-50 , frameSize.width, 50)];
     [viewP addSubview: idLenLabel];
     self.idLenLabel = idLenLabel;
     idLenLabel.textAlignment = NSTextAlignmentCenter;
+    if(_employee.PID && _employee.PID.length>0){
+        self.idLenLabel.text = [NSString stringWithFormat:@"已输入 %d 位字符",_employee.PID.length];
+    }
     
 }
 
 -(void)onTextFieldValueChange:(NSNotification*)notification{
     UITextField *textField = notification.object;
+    self.btnOk.enabled = textField.text.length==15 || textField.text.length==18;
     self.idLenLabel.text = [NSString stringWithFormat:@"已输入 %d 位字符",textField.text.length];
     
 }
@@ -155,19 +161,28 @@
 -(void)onBtnClicked:(UIButton*)sender{
     _employee.sign = true;
     [[DataBaseManager sharedManager]updateEmployee:_employee];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"employee_change" object:nil];
     if(sender.tag ==1 ){//取消报名
         [self doNotTourism];
     }else if(sender.tag ==2){//报名
         self.idPanel.hidden = NO;
+        if(_employee.PID!=nil && _employee.PID.length>15){
+            [self confirmPID];
+        }
     }else{//确定身份证
-        _employee.PID = self.tfID.text;
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:_employee.PID
-                                                        message:@"请再次确认您输入的身份证号码是否有误!"
-                                                       delegate:self
-                                              cancelButtonTitle:@"发现有误" otherButtonTitles:@"确认无误",nil];
-        [alert show];
-
+        [self confirmPID];
     }
+    
+}
+
+-(void)confirmPID{
+    _employee.PID = self.tfID.text;
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:_employee.PID
+                                                    message:@"请再次确认您输入的身份证号码是否有误!"
+                                                   delegate:self
+                                          cancelButtonTitle:@"发现有误" otherButtonTitles:@"确认无误",nil];
+    [alert show];
+
 }
 
 -(void)doNotTourism{
@@ -191,7 +206,7 @@
 
 
 -(void)setupNavBar{
-    self.title = [NSString stringWithFormat:@"欢迎%@",self.employee.name];
+    self.title = [NSString stringWithFormat:@"欢迎 %@",self.employee.name];
     self.view.backgroundColor = [UIColor whiteColor];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"返回" style:UIBarButtonItemStyleDone target:self action:@selector(goBack)];
     self.navigationItem.title = self.title;

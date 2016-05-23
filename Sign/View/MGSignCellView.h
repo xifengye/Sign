@@ -15,4 +15,6 @@
 @property(nonatomic,weak)UIButton* signView;
 @property(nonatomic,weak)UIButton* tourismView;
 @property(nonatomic,weak)UILabel* nameLabel;
+@property(nonatomic,weak)UILabel* phoneLabel;
+@property(nonatomic,weak)UILabel* companyLabel;
 @end

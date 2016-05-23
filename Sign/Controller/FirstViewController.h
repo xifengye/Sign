@@ -15,5 +15,6 @@
 @property(nonatomic,weak)UIView* idPanel;
 @property(nonatomic,weak)UITextField* tfID;
 @property(nonatomic,weak)UILabel* idLenLabel;
+@property(nonatomic,weak)UIButton* btnOk;
 @end
 

@@ -124,14 +124,16 @@
     for(int i=0;i<text.count;i++){
         NSString* employeeText = text[i];
         NSArray* items = [employeeText componentsSeparatedByString:@","];
-        if(items.count<5){
+        if(items.count<3){
             continue;
         }
         NSString* name=items[0];
-        NSString* sex = items[1];
-        NSString* phone = items[2];
-        NSString* company = items[3];
-        Employee* employee = [Employee employeeWithParam:phone name:name sex:sex company:company];
+        NSString* phone = items[1];
+        NSString* company = items[2];
+        Employee* employee = [Employee employeeWithParam:phone name:name sex:@"" company:company];
+        employee.PID = @"";
+        employee.sign = 0;
+        employee.tourism = 0;
         [es addObject:employee];
     }
     return es;
@@ -203,7 +205,7 @@
     NSMutableArray* employees = [NSMutableArray array];
     NSMutableArray<NSString*>*deptname = [NSMutableArray array];
     if ([self.dataBase open]) {
-        FMResultSet *rs = [self.dataBase executeQuery:[NSString stringWithFormat:@"SELECT ID,phone,name,sex,company FROM %@ ORDER BY phone ASC",TableEmployee]];
+        FMResultSet *rs = [self.dataBase executeQuery:[NSString stringWithFormat:@"SELECT ID,phone,name,sex,company,PID,sign,tourism FROM %@ ORDER BY phone ASC",TableEmployee]];
         while ([rs next]) {
             int ID = [rs intForColumn:@"ID"];
             NSString *name = [rs stringForColumn:@"name"];

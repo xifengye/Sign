@@ -22,7 +22,7 @@
 
 
 -(void)overMe:(id)sender{
-    [self dismissViewControllerAnimated:NO completion:nil];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 -(void)dealloc{
