@@ -230,10 +230,10 @@
 }
 
 
--(void)joinRemoteEmployees:(NSArray *)ems{
+-(void)joinRemoteSignEmployees:(NSArray *)ems{
     NSMutableArray* array = [NSMutableArray array];
     for(Employee* e in ems){
-        Employee* newEmployee = [self asyncRemoteEmployee:e];
+        Employee* newEmployee = [self asyncRemoteSignEmployee:e];
         if(newEmployee!=nil){
             [array addObject:newEmployee];
         }
@@ -243,7 +243,31 @@
     }
 }
 
--(Employee*)asyncRemoteEmployee:(Employee*)e{
+
+-(NSArray*)joinRemoteBaseEmployees:(NSArray *)ems{
+    NSMutableArray* needSyncEmployees = [NSMutableArray array];
+    NSMutableArray* array = [NSMutableArray array];
+    for(Employee* e in ems){
+        Employee*emp = [self employee:e];
+        if([e needSyncBaseInfo:emp]){
+            
+            [needSyncEmployees addObject:e];
+        }
+        Employee* newEmployee = [self asyncRemoteBaseEmployee:e other:emp];
+        if([needSyncEmployees containsObject:e]){
+            [self updateEmployee:emp];
+        }
+        if(newEmployee!=nil){
+            [array addObject:newEmployee];
+        }
+    }
+    if(array.count>0){
+        [self insertEmployees:array];
+    }
+    return needSyncEmployees;
+}
+
+-(Employee*)asyncRemoteSignEmployee:(Employee*)e{
     Employee*emp = [self employee:e];
     if(emp==nil){//远程新添加的
         return e;
@@ -251,6 +275,28 @@
         if(e.sign){
             emp.sign = true;
             emp.tourism = e.tourism;
+            if(e.PID!=nil && e.PID.length>0){
+                emp.PID = e.PID;
+            }
+            [self updateEmployee:emp];
+        }
+        return nil;
+    }
+}
+
+
+-(Employee*)asyncRemoteBaseEmployee:(Employee*)e other:(Employee*)emp{
+    if(emp==nil){//远程新添加的
+        return e;
+    }else{
+        if(e.PID!=nil && e.PID.length>0){
+            emp.PID = e.PID;
+        }
+        if(e.phone!=nil && e.phone.length>0){
+            emp.phone = e.phone;
+        }
+        if(e.company!=nil && e.company.length>0){
+            emp.company = e.company;
         }
         return nil;
     }
@@ -270,7 +316,7 @@
 -(Employee*) employee:(Employee*)emp{
     //    Employee* e = nil;
     for(Employee* e in self.employees){
-        if([e.phone isEqualToString:emp.phone] && [e.name isEqualToString:emp.name]){
+        if(([e.company isEqualToString:emp.company] || (e.company==nil && emp.company==nil)) && [e.name isEqualToString:emp.name]){
             return e;
         }
     }

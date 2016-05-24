@@ -31,6 +31,13 @@
                                              selector:@selector(didEmployeeDelete:)
                                                  name:@"employee_change" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(overMe:) name:@"OVER_ME" object:nil];
+    
+    
+    [self updateTabBarTitle];
+}
+
+-(void)updateTabBarTitle{
+    self.tabBarItem.title = [NSString stringWithFormat:@"签到(%d/%d)",[[DataBaseManager sharedManager] employeesBySigned].count,[[DataBaseManager sharedManager]employees].count];
 }
 
 
@@ -115,6 +122,7 @@
 
 
 -(void)didEmployeeDelete:(id)sender{
+    [self updateTabBarTitle];
     [self.tableView reloadData];
 }
 

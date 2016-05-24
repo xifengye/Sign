@@ -46,7 +46,9 @@
 - (BOOL) deleteTable:(NSString *)tableName;
 -(void)resetAppDataBase;
 
--(void)joinRemoteEmployees:(NSArray*)ems;
+-(void)joinRemoteSignEmployees:(NSArray *)ems;
+
+-(NSArray*)joinRemoteBaseEmployees:(NSArray *)ems;
 
 -(NSArray*)employeesBySigned;
 

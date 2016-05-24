@@ -10,26 +10,18 @@
 #import "Employee.h"
 
 @interface DetailViewController : UIViewController{
-    BOOL addMode;
+    NSUInteger addMode;
 }
-
 @property (strong, nonatomic) Employee* detailItem;
-@property (weak, nonatomic) IBOutlet UILabel  *labelName;
-@property (weak, nonatomic) IBOutlet UILabel  *labelPhone;
-@property (weak, nonatomic) IBOutlet UILabel  *labelCompany;
-@property (weak, nonatomic) IBOutlet UILabel  *labelPID;
 
-
-
-@property(weak,nonatomic) IBOutlet UIView* addPanel;
-@property(weak,nonatomic) IBOutlet UIView* detailPanel;
+@property (weak, nonatomic) IBOutlet UIView* panel;
 
 @property (weak, nonatomic) IBOutlet UITextField* tfName;
 @property (weak, nonatomic) IBOutlet UITextField* tfPhone;
 @property (weak, nonatomic) IBOutlet UITextField* tfCompany;
+@property (weak, nonatomic) IBOutlet UITextField* tfPID;
 
-
--(void)showAddEmployeePanel;
+- (void)willAdd;
 
 @end
 

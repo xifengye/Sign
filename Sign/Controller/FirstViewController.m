@@ -51,9 +51,10 @@
     UIFont* font = [UIFont fontWithName:@"Helvetica-Bold"  size:(35.0)];
     UIFont* btnFont = [UIFont fontWithName:@"Helvetica-Bold"  size:(50.0)];
     CGSize frameSize = self.view.frame.size;
-    UILabel* tipLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, frameSize.height*0.2,frameSize.width , 100)];
-    tipLabel.text = _employee.tourism? @"您已报名参加旅游活动,是否取消?":@"您还未报名参加旅游活动,是否报名参加?";
+    UILabel* tipLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, frameSize.height*0.2,frameSize.width , 150)];
+    tipLabel.text = _employee.tourism? @"您已参加27日永泰云顶的一日游,是否取消?":@"27日我们安排了永泰云顶的一日游\n您是否有意参加?";
     tipLabel.textColor = [UIColor blackColor];
+    tipLabel.numberOfLines = 2;
     [self.view addSubview:tipLabel];
     tipLabel.textAlignment = NSTextAlignmentCenter;
     tipLabel.font = font;
@@ -64,7 +65,7 @@
     CGFloat btn1X = frameSize.width*0.2;
     UIButton* btn1 = [[UIButton  alloc]initWithFrame:CGRectMake(btn1X,btnY , btnWidth, btnHeight)];
     [self.view addSubview:btn1];
-    [btn1 setTitle:_employee.tourism?@"取消报名":@"不报名" forState:UIControlStateNormal];
+    [btn1 setTitle:_employee.tourism?@"取消参加":@"不参加" forState:UIControlStateNormal];
     [btn1 setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     btn1.tag = 1;
     btn1.font = btnFont;
@@ -77,7 +78,7 @@
     
     UIButton* btn2 = [[UIButton  alloc]initWithFrame:CGRectMake(frameSize.width-btn1X-btnWidth, btnY, btnWidth, btnHeight)];
     [self.view addSubview:btn2];
-    [btn2 setTitle:_employee.tourism?@"依然报名":@"报名" forState:UIControlStateNormal];
+    [btn2 setTitle:_employee.tourism?@"依然参加":@"参加" forState:UIControlStateNormal];
     [btn2 setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     btn2.tag = 2;
     btn2.font = btnFont;

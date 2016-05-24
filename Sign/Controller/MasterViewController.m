@@ -33,6 +33,7 @@
 
 -(void)didEmployeeDelete:(id)sender{
     [self.tableView reloadData];
+    
 }
 
 -(void)dealloc{
@@ -74,7 +75,7 @@
         controller.navigationItem.leftItemsSupplementBackButton = YES;
     }else if([[segue identifier] isEqualToString:@"addEmployee"]) {
         DetailViewController *controller = (DetailViewController *)[[segue destinationViewController] topViewController];
-        [controller showAddEmployeePanel];
+        [controller willAdd];
     }
 }
 

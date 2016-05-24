@@ -47,10 +47,10 @@
 -(void)setupNavBar{
     self.title = @"数据同步";
     self.view.backgroundColor = [UIColor whiteColor];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"发送同步数据" style:UIBarButtonItemStyleDone target:self action:@selector(sendData)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"发送签到数据" style:UIBarButtonItemStyleDone target:self action:@selector(sendSignData)];
     self.navigationItem.title = self.title;
     
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"复制数据" style:UIBarButtonItemStyleDone target:self action:@selector(copyData)];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"发送基本数据" style:UIBarButtonItemStyleDone target:self action:@selector(sendBaseData)];
     
 }
 
@@ -72,13 +72,63 @@
 
 }
 
--(void)sendData{
+-(void)sendSignData{
     NSArray* arr = [[DataBaseManager sharedManager] employeesBySigned];
+    NSString* ip = [NSString stringWithFormat:@"%@&%@",myIP,@"SIGN"];
+    if(arr.count>numberOfOnceSync){
+        int times = arr.count/numberOfOnceSync;
+        if(arr.count%numberOfOnceSync!=0){
+            times = times+1;
+        }
+        int currentIndex = 0;
+        for(int i=0;i<times;i++){
+            NSMutableArray* array = [NSMutableArray array];
+            for(int j=0;j<numberOfOnceSync;j++){
+                if(currentIndex>=arr.count){
+                    break;
+                }
+                [array addObject:arr[currentIndex++]];
+            }
+            [self sendSyncData:array forIp:ip];
+        }
+    }else{
+        [self sendSyncData:arr forIp:ip];
+    }
+}
+
+-(void)sendBaseData{
+    NSArray* arr = [[DataBaseManager sharedManager] employees];
+    NSString* ip = [NSString stringWithFormat:@"%@&%@",myIP,@"BASE"];
+    if(arr.count>numberOfOnceSync){
+        int times = arr.count/numberOfOnceSync;
+        if(arr.count%numberOfOnceSync!=0){
+            times = times+1;
+        }
+        int currentIndex = 0;
+        for(int i=0;i<times;i++){
+            NSMutableArray* array = [NSMutableArray array];
+            for(int j=0;j<numberOfOnceSync;j++){
+                if(currentIndex>=arr.count){
+                    break;
+                }
+                [array addObject:arr[currentIndex++]];
+            }
+            NSLog(@"发送%d个数据",array.count);
+            [self sendSyncData:array forIp:ip];
+        }
+    }else{
+        [self sendSyncData:arr forIp:ip];
+    }
+
+}
+
+-(void)sendSyncData:(NSArray*) arr forIp:(NSString*)ip{
     if(arr.count>0){
-        SocketData* socketData = [[SocketData alloc]initWithParam:myIP employees:arr];
+        SocketData* socketData = [[SocketData alloc]initWithParam:ip employees:arr];
         NSString* data = [socketData toDictString];
         [self sendMassage:data];
     }
+
 }
 
 
@@ -108,6 +158,7 @@
 //通过UDP,发送消息
 -(void)sendMassage:(NSString *)message
 {
+    
     
     NSDate *nowTime = [NSDate date];
     
@@ -146,24 +197,40 @@
     
     NSString *info=[[NSString alloc] initWithData:data encoding: NSUTF8StringEncoding];
     NSArray* arr = [info componentsSeparatedByString:@"^"];
-    NSString* ip = arr[0];
+    NSString* firstPart = arr[0];
+    NSArray* firstPartArr = [firstPart componentsSeparatedByString:@"&"];
     NSString* employeesStr = arr[1];
     NSArray* array = [NSDictionary arrayWithJsonString:employeesStr];
     NSArray* employees = [Employee objectArrayWithKeyValuesArray:array];
-    SocketData* socketData = [[SocketData alloc]initWithParam:ip employees:employees];
+    SocketData* socketData = [[SocketData alloc]initWithParam:firstPartArr[0] employees:employees];
     //收到自己发的广播时不显示出来
     if ([socketData.fromIp isEqualToString:myIP])
     {
         return YES;
     }
-    [self onReceiveRemoteEmployees:employees];
+    
+    NSString* operate = firstPartArr[1];
+    if([@"SIGN" isEqualToString:operate]){
+        [self onReceiveRemoteSignEmployees:employees];
+    }else{
+        [self onReceiveRemoteBaseEmployees:employees];
+    }
     return YES;
 }
 
--(void)onReceiveRemoteEmployees:(NSArray*)res{
-    [[DataBaseManager sharedManager]joinRemoteEmployees:res];
-    [remoteEmployees removeAllObjects];
+-(void)onReceiveRemoteSignEmployees:(NSArray*)res{
+    [[DataBaseManager sharedManager]joinRemoteSignEmployees:res];
+//    [remoteEmployees removeAllObjects];
     [remoteEmployees addObjectsFromArray:res];
+    [self.tableView reloadData];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"employee_change" object:nil];
+}
+
+
+-(void)onReceiveRemoteBaseEmployees:(NSArray*)res{
+    NSArray* needSyncEmployees = [[DataBaseManager sharedManager]joinRemoteBaseEmployees:res];
+//    [remoteEmployees removeAllObjects];
+    [remoteEmployees addObjectsFromArray:needSyncEmployees];
     [self.tableView reloadData];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"employee_change" object:nil];
 }

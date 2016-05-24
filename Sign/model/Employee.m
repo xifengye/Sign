@@ -29,7 +29,7 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"%@ %@  %@ %@", _name,_phone,_sign?@"已签到":@"未签到",_tourism?@"参加":@""];
+    return [NSString stringWithFormat:@"%@ %@  %@ %@", self.name,_phone,_sign?@"已签到":@"未签到",_tourism?@"参加":@""];
 }
 
 -(void)setName:(NSString *)name{
@@ -71,10 +71,10 @@
 
 -(NSString *)toDictString{
     NSMutableString* sb = [NSMutableString string];
-    [sb appendString:[NSString stringWithFormat:@"{\"phone\":\"%@\",",_phone==nil?@"":_phone]];
-    [sb appendString:[NSString stringWithFormat:@"\"name\":\"%@\",",_name==nil?@"":_name]];
+    [sb appendString:[NSString stringWithFormat:@"{\"phone\":\"%@\",",self.phone]];
+    [sb appendString:[NSString stringWithFormat:@"\"name\":\"%@\",",self.name]];
     [sb appendString:[NSString stringWithFormat:@"\"company\":\"%@\",",_company]];
-    [sb appendString:[NSString stringWithFormat:@"\"PID\":\"%@\",",_PID==nil?@"":_PID]];
+    [sb appendString:[NSString stringWithFormat:@"\"PID\":\"%@\",",self.PID]];
     [sb appendString:[NSString stringWithFormat:@"\"sign\":%hhd,",_sign]];
     [sb appendString:[NSString stringWithFormat:@"\"tourism\":%hhd}",_tourism]];
     return sb;
@@ -82,6 +82,17 @@
 
 -(NSString *)PID{
    return _PID==nil?@"":_PID;
+}
+-(NSString *)phone{
+    return _phone==nil?@"":_phone;
+}
+
+
+-(BOOL)needSyncBaseInfo:(Employee *)e{
+    if(e==nil){
+        return true;
+    }
+    return !([e.name isEqualToString:self.name] && [e.phone isEqualToString:self.phone] && [e.company isEqualToString:self.company]);
 }
 
 

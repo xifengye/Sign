@@ -12,8 +12,8 @@
 @interface Employee : ModelBase{
     NSString* pinyin;
 }
+@property(nonatomic,copy)NSString* name;
 @property(nonatomic,copy)NSString* phone;//电话
-@property(nonatomic,copy)NSString* name;//姓名
 @property(nonatomic,copy)NSString* company;//公司
 @property(nonatomic,copy)NSString* sex;
 @property(nonatomic,copy)NSString* PID;//身份证号码
@@ -26,6 +26,9 @@
 -(void)setPinyin:(NSString*)pinyin;
 
 -(NSString*)toDictString;
+
+
+-(BOOL)needSyncBaseInfo:(Employee*)e;//是否需要同步e的基本数据
 
 
 -(instancetype)initWithParam:(NSString*)phone name:(NSString*)name sex:(NSString*)sex company:(NSString*)company;
